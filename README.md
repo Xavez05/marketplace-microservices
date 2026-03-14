@@ -1,13 +1,14 @@
 # 🏪 Marketplace Microservices Platform
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-A full-stack marketplace application built with a **microservices architecture**. The backend is powered by Spring Boot and Spring Cloud (Eureka + API Gateway + JWT Auth), while the frontend is a **React + Vite** SPA. All services are orchestrated with Docker Compose.
+A full-stack marketplace application built with a **microservices architecture**. The backend uses Spring Boot and Spring Cloud (Eureka + API Gateway + JWT Auth), while the frontend is a **React 18 + Vite + Tailwind CSS** SPA with protected routes and JWT session management. All services are orchestrated with Docker Compose.
 
 ---
 
@@ -17,39 +18,76 @@ A full-stack marketplace application built with a **microservices architecture**
                     ┌────────────────────────────────────────────────┐
                     │                Docker Compose                   │
                     │                                                │
-  Browser ──────►  │  ┌──────────────┐    ┌─────────────────┐      │
-                    │  │  Frontend    │───►│   API Gateway   │      │
-                    │  │ React + Vite │    └────────┬────────┘      │
-                    │  └──────────────┘             │ routes        │
-                    │                    ┌──────────▼───────┐       │
-                    │                    │   Eureka Server  │       │
-                    │                    └──────────┬───────┘       │
-                    │           ┌──────────────────┬┴─────────────┐ │
-                    │           ▼                  ▼              ▼ │
-                    │      ┌─────────┐       ┌──────────┐  ┌──────┐ │
-                    │      │  Auth   │       │  Users   │  │ Cart │ │
-                    │      │ Service │       │ Service  │  │ Svc. │ │
-                    │      └─────────┘       └──────────┘  └──────┘ │
-                    │           ▼                  ▼                 │
-                    │      ┌─────────┐       ┌──────────┐           │
-                    │      │Products │       │  Orders  │           │
-                    │      │ Service │       │ Service  │           │
-                    │      └─────────┘       └──────────┘           │
+  Browser ──────►  │  ┌──────────────────────┐                     │
+                    │  │  Frontend (React SPA) │                     │
+                    │  │  React 18 · Vite      │                     │
+                    │  │  Tailwind · Axios      │                     │
+                    │  └──────────┬───────────┘                     │
+                    │             │ JWT Bearer token                 │
+                    │  ┌──────────▼───────────┐                     │
+                    │  │     API Gateway       │ :8080               │
+                    │  │  Routes + JWT guard   │                     │
+                    │  └──────────┬───────────┘                     │
+                    │  ┌──────────▼───────────┐                     │
+                    │  │    Eureka Server      │ :8761               │
+                    │  │  Service Discovery    │                     │
+                    │  └──┬──┬──┬──┬──┬───────┘                     │
+                    │     ▼  ▼  ▼  ▼  ▼                             │
+                    │  Auth User Product Cart Order                  │
+                    │  Svc  Svc Svc     Svc  Svc                    │
                     └────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🧩 Services
+## 🖥️ Frontend — React + Vite + Tailwind
 
-### 🖥️ Frontend — React + Vite
-Modern SPA built with React and Vite. Communicates with the backend exclusively through the API Gateway.
+### Pages & Routing
 
-### 🌐 API Gateway
-Single entry point that routes all requests to the appropriate microservice and enforces JWT authentication on every request.
+| Route | Page | Access |
+|---|---|---|
+| `/` | Login | Public |
+| `/register` | Register | Public |
+| `/app` | Home (Dashboard) | Protected |
+| `/app/products` | Product listing | Protected |
+| `/app/cart` | Shopping cart | Protected |
+| `/app/orders` | Order history | Protected |
+| `/app/orders/:id` | Order detail | Protected |
+| `/app/confirm` | Order confirmation | Protected |
+| `/app/profile` | User profile | Protected |
 
-### 🔍 Eureka Server
-Service registry enabling dynamic service discovery and load balancing across all microservices.
+### Key Features
+- **JWT Authentication** — Token stored in localStorage, injected on every request via Axios interceptor
+- **Protected Routes** — `ProtectedRoute` component wraps all private pages
+- **Shared Layout** — `DashboardLayout` provides navigation across authenticated pages
+- **JWT Decode** — Client-side token parsing for session management
+
+### Tech Stack
+- React 18 · React Router DOM v7
+- Vite 4 · Tailwind CSS 3
+- Axios (with JWT interceptor) · jwt-decode
+
+### Run locally (development)
+```bash
+cd front
+npm install
+npm run dev
+```
+
+### Build for production
+```bash
+npm run build
+```
+
+---
+
+## 🧩 Backend Services
+
+### 🌐 API Gateway — `localhost:8080`
+Single entry point that routes all client requests and validates JWT tokens before forwarding to microservices.
+
+### 🔍 Eureka Server — `localhost:8761`
+Service registry enabling dynamic service discovery across all microservices.
 
 ### 🔐 Auth Service
 JWT-based authentication: login, token generation, and validation.
@@ -58,13 +96,26 @@ JWT-based authentication: login, token generation, and validation.
 User account management: registration, profile updates, and queries.
 
 ### 📦 Product Service
-Product catalog management: creation, listing, and inventory tracking.
+Product catalog management: listing, creation, and inventory.
 
 ### 🛒 Cart Service
 Shopping cart operations: add items, update quantities, and clear cart.
 
 ### 🧾 Order Service
-Order processing from cart checkout through to fulfillment tracking.
+Order processing from cart checkout through fulfillment tracking.
+
+---
+
+## 🔐 Authentication Flow
+
+```
+1. User logs in  ──► Auth Service ──► JWT token issued
+2. Token stored in localStorage
+3. Axios interceptor injects token on every request:
+   Authorization: Bearer <token>
+4. API Gateway validates token before routing to any service
+5. ProtectedRoute checks token on frontend before rendering pages
+```
 
 ---
 
@@ -81,46 +132,22 @@ Order processing from cart checkout through to fulfillment tracking.
 docker-compose up --build
 ```
 
-### Run frontend locally (development)
-```bash
-cd front
-npm install
-npm run dev
-```
-
 ### Service URLs
 
 | Service | URL |
 |---|---|
-| Frontend | http://localhost:5173 |
+| Frontend | http://localhost:5173 (dev) |
 | API Gateway | http://localhost:8080 |
 | Eureka Dashboard | http://localhost:8761 |
-| Auth Service | http://localhost:8081 |
-| User Service | http://localhost:8082 |
-| Product Service | http://localhost:8083 |
-| Cart Service | http://localhost:8084 |
-| Order Service | http://localhost:8085 |
 
 ---
 
-## 🔐 Authentication Flow
-
-```
-Client ──► API Gateway ──► Auth Service ──► JWT Token issued
-               │
-               └──► All subsequent requests validated via JWT
-                    before routing to any protected service
-```
-
-All protected endpoints require a valid JWT in the `Authorization: Bearer <token>` header.
-
----
-
-## 🛠️ Tech Stack
+## 🛠️ Full Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React · Vite |
+| Frontend | React 18 · Vite · Tailwind CSS · React Router DOM v7 |
+| HTTP Client | Axios + JWT interceptor |
 | Backend Language | Java |
 | Framework | Spring Boot |
 | Service Discovery | Spring Cloud Netflix Eureka |
