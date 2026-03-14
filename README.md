@@ -40,7 +40,7 @@ A full-stack marketplace application built with a **microservices architecture**
 
 ---
 
-## 🖥️ Frontend — React + Vite + Tailwind
+## 🖥️ Frontend — React 18 + Vite + Tailwind CSS
 
 ### Pages & Routing
 
@@ -57,17 +57,20 @@ A full-stack marketplace application built with a **microservices architecture**
 | `/app/profile` | User profile | Protected |
 
 ### Key Features
-- **JWT Authentication** — Token stored in localStorage, injected on every request via Axios interceptor
-- **Protected Routes** — `ProtectedRoute` component wraps all private pages
-- **Shared Layout** — `DashboardLayout` provides navigation across authenticated pages
-- **JWT Decode** — Client-side token parsing for session management
+
+- **JWT Authentication** — Token stored in localStorage, automatically injected on every request via Axios interceptor
+- **Protected Routes** — `ProtectedRoute` component wraps all private pages, redirecting unauthenticated users
+- **Shared Layout** — `DashboardLayout` provides consistent navigation across all authenticated pages
+- **JWT Decode** — Client-side token parsing for session management without extra API calls
 
 ### Tech Stack
+
 - React 18 · React Router DOM v7
 - Vite 4 · Tailwind CSS 3
 - Axios (with JWT interceptor) · jwt-decode
 
 ### Run locally (development)
+
 ```bash
 cd front
 npm install
@@ -75,6 +78,7 @@ npm run dev
 ```
 
 ### Build for production
+
 ```bash
 npm run build
 ```
@@ -114,7 +118,7 @@ Order processing from cart checkout through fulfillment tracking.
 3. Axios interceptor injects token on every request:
    Authorization: Bearer <token>
 4. API Gateway validates token before routing to any service
-5. ProtectedRoute checks token on frontend before rendering pages
+5. ProtectedRoute checks token on the frontend before rendering pages
 ```
 
 ---
@@ -122,12 +126,14 @@ Order processing from cart checkout through fulfillment tracking.
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Java 21+
 - Maven 3.9+
 - Node.js 18+
 - Docker & Docker Compose
 
 ### Run everything with Docker
+
 ```bash
 docker-compose up --build
 ```
@@ -136,9 +142,14 @@ docker-compose up --build
 
 | Service | URL |
 |---|---|
-| Frontend | http://localhost:5173 (dev) |
+| Frontend (dev) | http://localhost:5173 |
 | API Gateway | http://localhost:8080 |
 | Eureka Dashboard | http://localhost:8761 |
+| Auth Service | http://localhost:8081 |
+| User Service | http://localhost:8082 |
+| Product Service | http://localhost:8083 |
+| Cart Service | http://localhost:8084 |
+| Order Service | http://localhost:8085 |
 
 ---
 
@@ -161,5 +172,6 @@ docker-compose up --build
 ## 👨‍💻 Author
 
 **Antony Chávez** — Backend Developer
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/antonychavez)
 [![GitHub](https://img.shields.io/badge/GitHub-Xavez05-181717?style=flat&logo=github&logoColor=white)](https://github.com/Xavez05)
